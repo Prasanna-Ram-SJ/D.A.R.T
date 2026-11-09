@@ -1,5 +1,6 @@
 # D.A.R.T – Decentralized Authentication and Record Tracking
 
+[![Live Deployment](https://img.shields.io/badge/Live%20Deployment-dartworkspace.pages.dev-2563EB.svg)](https://dartworkspace.pages.dev/)
 [![Tezos Network](https://img.shields.io/badge/Tezos-Shadownet-5B3DF5.svg)](https://teztnets.com/shadownet-about)
 [![SmartPy](https://img.shields.io/badge/Contract-SmartPy-orange.svg)](https://smartpy.io)
 [![Taquito](https://img.shields.io/badge/Taquito-v20-purple.svg)](https://tezostaquito.io)
@@ -7,10 +8,12 @@
 [![Supabase](https://img.shields.io/badge/Catalogue-Supabase-3ECF8E.svg)](https://supabase.com)
 [![TypeScript](https://img.shields.io/badge/Language-TypeScript-3178C6.svg)](https://www.typescriptlang.org)
 [![Build](https://img.shields.io/badge/Build-Vite%20%2B%20React-646CFF.svg)](https://vitejs.dev)
-[![Tests](https://img.shields.io/badge/Tests-50%20passing-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-61%20passing-brightgreen.svg)]()
 
 > **Decentralized document integrity registry for student clubs, research groups, and project teams.**  
 > Verify document revisions and establish immutable cryptographic proof on Tezos Shadownet without uploading files or exposing private data.
+
+> 🌐 **If you want to check out our website, click this link: [https://dartworkspace.pages.dev/](https://dartworkspace.pages.dev/)**
 
 ---
 
@@ -76,25 +79,103 @@ When student organizations and project teams distribute bylaws, contest entries,
 
 ```mermaid
 flowchart TD
-    subgraph Registration ["1. Registration (Authorized Registrar Admin)"]
-        A["Select Local Document\n(PDF, DOCX, ZIP, etc.)"] --> B["Compute SHA-256 in Browser\n(Web Crypto API)"]
-        B --> C["Auto-Generate UUID Record ID\n& Enter Label"]
-        C --> D["Connect Tezos Wallet\n(Beacon / Temple on Shadownet)"]
-        D --> E["Review & Sign Transaction\n(Admin-Restricted 'register' Entrypoint)"]
-        E --> F[("Tezos Shadownet Big_Map\n(Permanent On-Chain Storage)")]
-        E -. Sync Label .-> G[("Supabase Catalogue\n(Searchable Label Index)")]
+    subgraph Registration["1. Registration (Authorized Registrar Admin)"]
+        A["Select Local Document<br/>(PDF, DOCX, ZIP, etc.)"] --> B["Compute SHA-256 in Browser<br/>(Web Crypto API)"]
+        B --> C["Auto-Generate UUID Record ID<br/>& Enter Label"]
+        C --> D["Connect Tezos Wallet<br/>(Beacon / Temple on Shadownet)"]
+        D --> E["Review & Sign Transaction<br/>(Admin-Restricted 'register' Entrypoint)"]
+        E --> F[("Tezos Shadownet Big_Map<br/>(Permanent On-Chain Storage)")]
+        E -.->|Sync Label| G[("Supabase Catalogue<br/>(Searchable Label Index)")]
     end
 
-    subgraph Verification ["2. Verification (Public & Read-Only)"]
-        H["Select Local Copy to Check"] --> I["Compute SHA-256 in Browser\n(Web Crypto API)"]
-        J["Search by Label or Enter Record ID"] --> K["Call 'get_record' View via RPC\n(Zero Gas • No Wallet Needed)"]
-        F -. Query View .-> K
-        I --> L{"Cryptographic\nDigest Comparison"}
+    subgraph Verification["2. Verification (Public & Read-Only)"]
+        H["Select Local Copy to Check"] --> I["Compute SHA-256 in Browser<br/>(Web Crypto API)"]
+        J["Search by Label or Enter Record ID"] --> K["Call 'get_record' View via RPC<br/>(Zero Gas • No Wallet Needed)"]
+        F -.->|Query View| K
+        I --> L{"Cryptographic<br/>Digest Comparison"}
         K --> L
-        L -->|"Hashes Match"| M["🟢 MATCH\nSelected file matches registered version"]
-        L -->|"Hashes Differ"| N["🟠 MISMATCH\nSelected file differs from registered version"]
-        L -->|"Unknown Record"| O["⚪ RECORD NOT FOUND\nNo record found for this ID"]
+        L -->|"Hashes Match"| M["MATCH<br/>Selected file matches registered version"]
+        L -->|"Hashes Differ"| N["MISMATCH<br/>Selected file differs from registered version"]
+        L -->|"Unknown Record"| O["RECORD NOT FOUND<br/>No record found for this ID"]
     end
+```
+
+#### Universal Architectural Flow Diagram
+*(Text-compatible diagram ensuring reliable viewing on all devices, offline editors, and laptops without Mermaid rendering support)*
+
+```text
+====================================================================================================
+                             D.A.R.T. CRYPTOGRAPHIC ARCHITECTURE FLOW
+====================================================================================================
+
+1. REGISTRATION (Authorized Registrar Admin)
+   ┌─────────────────────────────────────────────────────────────┐
+   │ 1. Select Local Document (PDF, DOCX, ZIP, etc.)             │
+   │    • 100% Client-Side Privacy (Zero File Upload)            │
+   └──────────────────────────────┬──────────────────────────────┘
+                                  │
+                                  ▼
+   ┌─────────────────────────────────────────────────────────────┐
+   │ 2. Compute SHA-256 Digest in Browser                        │
+   │    • crypto.subtle.digest('SHA-256', arrayBuffer)           │
+   └──────────────────────────────┬──────────────────────────────┘
+                                  │
+                                  ▼
+   ┌─────────────────────────────────────────────────────────────┐
+   │ 3. Auto-Generate Record ID (UUID v4) & Enter Label          │
+   └──────────────────────────────┬──────────────────────────────┘
+                                  │
+                                  ▼
+   ┌─────────────────────────────────────────────────────────────┐
+   │ 4. Connect Tezos Wallet (Beacon / Temple on Shadownet)      │
+   └──────────────────────────────┬──────────────────────────────┘
+                                  │
+                                  ▼
+   ┌─────────────────────────────────────────────────────────────┐
+   │ 5. Review & Sign Transaction                                │
+   │    • Calls SmartPy 'register' entrypoint (Admin-Restricted) │
+   └──────────────┬──────────────────────────────┬───────────────┘
+                  │                              │
+                  ▼ (Permanent On-Chain Storage) ▼ (Searchable Index)
+   ┌──────────────────────────────┐    ┌─────────────────────────┐
+   │ Tezos Shadownet Big_Map      │    │ Supabase Catalogue      │
+   │ • record_id (UUID v4 string) │    │ • label (Document Name) │
+   │ • label (Human-readable)     │    │ • record_id (UUID v4)   │
+   │ • sha256 (Hex digest)        │    └─────────────────────────┘
+   │ • registrar (Admin address)  │
+   │ • registered_at (Timestamp)  │
+   └──────────────┬───────────────┘
+                  │
+==================╪=================================================================================
+                  │
+2. VERIFICATION (Public & Read-Only • No Wallet Needed • Zero Gas)
+                  │
+   ┌──────────────┴───────────────┐    ┌─────────────────────────┐
+   │ Enter Record ID or Label     │    │ Select File to Verify   │
+   └──────────────┬───────────────┘    └────────────┬────────────┘
+                  │                                 │
+                  ▼                                 ▼
+   ┌──────────────────────────────┐    ┌─────────────────────────┐
+   │ Query 'get_record' View      │    │ Compute SHA-256 Digest  │
+   │ (Free On-Chain RPC Call)     │    │ in Local Browser Client │
+   └──────────────┬───────────────┘    └────────────┬────────────┘
+                  │                                 │
+                  │ Registered On-Chain SHA-256     │ Computed File SHA-256
+                  └───────────────┬─────────────────┘
+                                  ▼
+                  ┌─────────────────────────────────┐
+                  │ Cryptographic Digest Comparison │
+                  └───────────────┬─────────────────┘
+                                  │
+         ┌────────────────────────┼────────────────────────┐
+         │                        │                        │
+         ▼ (Hashes Match)         ▼ (Hashes Differ)        ▼ (ID Not in Big_Map)
+   ┌──────────────┐         ┌──────────────┐         ┌──────────────────┐
+   │    MATCH     │         │   MISMATCH   │         │ RECORD NOT FOUND │
+   │ File matches │         │ File differs │         │ No record exists │
+   │ registered   │         │ from on-chain│         │ on Shadownet for │
+   │ fingerprint  │         │ fingerprint  │         │ this Record ID   │
+   └──────────────┘         └──────────────┘         └──────────────────┘
 ```
 
 ---
@@ -232,7 +313,7 @@ VITE_SUPABASE_PUBLISHABLE_KEY=your-public-anon-key
 > [!IMPORTANT]
 > Never store, commit, or expose private keys, seed phrases, or database secrets. Only public addresses and public keys belong in `.env`.
 
-### Development Server
+### Development Server & Live Deployment
 
 Start Vite with hot module replacement:
 
@@ -240,14 +321,14 @@ Start Vite with hot module replacement:
 npm run dev
 ```
 
-Open [http://localhost:5173/](http://localhost:5173/) in your browser.
+Open [https://dartworkspace.pages.dev/](https://dartworkspace.pages.dev/) in your browser.
 
 ### Testing & Quality Assurance
 
-The test suite covers local Web Crypto hashing, UUID generation, Supabase catalogue search and debouncing, theme state management, option record decoding, and live Shadownet RPC queries:
+The test suite covers local Web Crypto hashing, UUID generation, Supabase catalogue search and debouncing, theme state management, option record decoding, approval lineage traversal, and live Shadownet RPC queries:
 
 ```bash
-# Run unit test suite (50 tests)
+# Run unit test suite (61 tests)
 npm run test
 
 # Run tests in watch mode

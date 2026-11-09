@@ -33,6 +33,7 @@ __pycache__/
 
 # Temporary / testing files
 *.local
+scratch/
 
 # Editor directories and files
 .vscode/*
