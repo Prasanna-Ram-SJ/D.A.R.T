@@ -279,8 +279,8 @@ The smart contract is written in [SmartPy](https://smartpy.io) and compiled to M
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/Prasanna-Ram-SJ/document-integrity-registry.git
-cd document-integrity-registry
+git clone https://github.com/Prasanna-Ram-SJ/D.A.R.T.git
+cd D.A.R.T
 npm install
 ```
 
